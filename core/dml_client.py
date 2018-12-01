@@ -5,7 +5,7 @@ import time
 
 import ipfsapi
 
-from blockchain_client import BlockchainClient
+from core.blockchain_client import BlockchainClient
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -20,7 +20,7 @@ class DMLClient(BlockchainClient):
         """
         Connect with running IPFS node.
         """
-        super.__init__()
+        super().__init__(config_filepath)
 
     # helper function implementation
 
@@ -45,10 +45,10 @@ class DMLClient(BlockchainClient):
         # NOTE: Currently we can't really send out a custom raw_filepath for
         # every data provider, so...
         # TODO: Something something map dataset_uuid to raw_filepath?
-        job_to_post["raw_filepath"] = next(iter(participants.values()))["raw_filepath"]
+        # job_to_post["uuid"] = next(iter(participants.values()))["dataset_uuid"]
         # NOTE: Currently we can't really send out a custom label_column_name for
         # every data provider, so...
-        job_to_post["label_column_name"] = next(iter(participants.values()))["label_column_name"]
+        # job_to_post["label_column_name"] = next(iter(participants.values()))["label_column_name"]
         serialized_job = {
             "job_data": job_to_post
         }
@@ -56,7 +56,8 @@ class DMLClient(BlockchainClient):
             BlockchainClient.KEY: None,
             BlockchainClient.CONTENT: {
                 "optimizer_params": optimizer,
-                "serialized_job": serialized_job
+                "serialized_job": serialized_job,
+                "participants": participants
             }
         }
         on_chain_value = self.client.add_json(new_session_event)
@@ -70,7 +71,7 @@ class DMLClient(BlockchainClient):
             except (UnboundLocalError, requests.exceptions.ConnectionError) as e:
                 logging.info("HTTP SET error, got: {0}".format(e))
                 continue
-        return on_chain_value, tx_receipt_text
+        return on_chain_value, tx_receipt
 
     def _make_model(self, model: object, batch_size: int=32, 
                     epochs: int=10, split: float=1, avg_type: str="data_size"):
@@ -97,17 +98,20 @@ class DMLClient(BlockchainClient):
         model_dict["hyperparams"] = hyperparams
         return model_dict
     
-    def _make_participants(self, participants: list):
+    def _make_participants(self, participants: dict):
         """
         Returns a dict representing participants
         """
         # TODO: Fill this in once the communication schema is set
         # do dictionary comprehension
-        return {participant["uuid"]: {
-            "raw_filepath" : participant.get("raw_filepath", "datasets/mnist"),
-            "label_column_name": participant.get("label_column_name", "label")
-            } for participant in participants
-        }
+        # keys = iter(participants.keys())
+        # next(keys)
+        # vals = iter(participants.values())
+        returndict = {}
+        for dataset_name, nested_dict in participants.items():
+            nested_dict["label_column_name"] = nested_dict.get("label_column_name", "label")
+            returndict[dataset_name] = nested_dict
+        return returndict
     
     def _make_optimizer(self, opt_type="fed_avg", 
                         num_rounds=1, num_averages_per_round=1):
