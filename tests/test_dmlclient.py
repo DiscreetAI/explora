@@ -1,6 +1,9 @@
 import tests.context
 import pytest
 
+from keras.models import Sequential
+from keras.layers import Dense, Activation
+
 from core.dml_client import DMLClient
 
 @pytest.fixture(scope='session')
@@ -24,8 +27,6 @@ def model():
     """
     Returns a model in Keras that has been compiled with its optimizer
     """
-    from keras.models import Sequential
-    from keras.layers import Dense, Activation
     model = Sequential([
         Dense(32, input_shape=(784,)),
         Activation('relu'),
