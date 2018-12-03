@@ -100,7 +100,12 @@ class DMLClient(BlockchainClient):
     def _make_participants(self, participants: dict):
         """
         Helper function for decentralized_learn.
-        Returns a dict representing participants
+        Returns a dict of participants = {
+            dataprovider_name: {'dataset_uuid': uuid,
+            'label_column_name': label})
+        }
+        For the MVP, all participants will see this long dict. They will lookup their own
+        name, to get the uuid of their dataset and the label_column_name for their dataset.
         NOTE: Currently this function only tests the label_column_name
         but in future, it could do more.
         """

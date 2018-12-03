@@ -40,12 +40,7 @@ def model():
 @pytest.fixture(scope='session')
 def participants():
     """
-    Returns a dict of participants = {
-        dataprovider_name: {'dataset_uuid': uuid,
-        'label_column_name': label})
-    }
-    For the MVP, all participants will see this long dict. They will lookup their own
-    name, to get the uuid of their dataset and the label_column_name for their dataset.
+    Returns an example dict of participants
     """
     return {"pandata": {"dataset_uuid": 1234, "label_column_name": "label"}, 
             "needless": {"dataset_uuid": 4567, "label_column_name": "label"}}
