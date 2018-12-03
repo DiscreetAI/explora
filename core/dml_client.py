@@ -101,15 +101,18 @@ class DMLClient(BlockchainClient):
         """
         Helper function for decentralized_learn.
         Returns a dict representing participants
-        NOTE: Currently this function only sets the default label_column_name
+        NOTE: Currently this function only tests the label_column_name
         but in future, it could do more.
         """
         # TODO: This should be updated once we have a better schema for
         # what the participants dict will look like.
         returndict = {}
-        for dataset_name, nested_dict in participants.items():
-            nested_dict["label_column_name"] = nested_dict.get("label_column_name", "label")
-            returndict[dataset_name] = nested_dict
+        for dataprovider_name, nested_dict in participants.items():
+            try:
+                label = nested_dict["label_column_name"]
+            except Exception as e:
+                raise Exception("Supervised learning needs a column to be specified as the label column")
+            returndict[dataprovider_name] = nested_dict
         return returndict
     
     def _make_optimizer(self, opt_type="fed_avg", 

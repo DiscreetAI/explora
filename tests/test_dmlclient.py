@@ -40,14 +40,15 @@ def model():
 @pytest.fixture(scope='session')
 def participants():
     """
-    Returns a dict of participants = [
-        (data_provider_name, {'dataset_uuid': uuid,
-        'label_column_name': 'label'})
-    ]
+    Returns a dict of participants = {
+        dataprovider_name: {'dataset_uuid': uuid,
+        'label_column_name': label})
+    }
     For the MVP, all participants will see this long dict. They will lookup their own
     name, to get the uuid of their dataset and the label_column_name for their dataset.
     """
-    return {"pandata": {"dataset_uuid": 1234}, "needless": {"dataset_uuid": 4567}}
+    return {"pandata": {"dataset_uuid": 1234, "label_column_name": "label"}, 
+            "needless": {"dataset_uuid": 4567, "label_column_name": "label"}}
 
 def test_dml_client_serializes_job_correctly(dml_client, ipfs_client, model, participants):
     key = dml_client.decentralized_learn(
@@ -60,3 +61,14 @@ def test_dml_client_serializes_job_correctly(dml_client, ipfs_client, model, par
     participants["needless"]["label_column_name"] = "label"
     assert participants == content["participants"]
     assert content["optimizer_params"]["optimizer_type"] == "fed_avg"
+
+def test_dml_client_validates_label_column_name(dml_client, ipfs_client, model, participants):
+    participants["thiccnicc"] = {"dataset_uuid": 666}
+    try:
+        key = dml_client.decentralized_learn(
+            model, participants
+        )
+        raise Exception("Should have errored since we didn't pass in label_column_name")
+    except Exception as e:
+        assert str(e) == "Supervised learning needs a column to be specified as the label column"
+    
