@@ -42,9 +42,7 @@ class DMLClient(BlockchainClient):
         # NOTE: Currently we only support Keras, so this is hardcoded
         job_to_post["framework_type"] = model.get("framework_type", "keras")
         job_to_post["hyperparams"] = model["hyperparams"]
-        serialized_job = {
-            "job_data": job_to_post
-        }
+        serialized_job = {"job_data": job_to_post}
         new_session_event = {
             BlockchainClient.KEY: None,
             BlockchainClient.CONTENT: {
@@ -54,22 +52,25 @@ class DMLClient(BlockchainClient):
             }
         }
         # Add dict to IPFS for later retrieval over blockchain
+        key_vals = [self.client.add_json(participant) for
+                            participant in participants]
         on_chain_value = self.client.add_json(new_session_event)
         # Currently, by definition a 'new session' tx has key==value.
         # If this changes in future, then this should also be changed.
-        tx = {BlockchainClient.KEY: on_chain_value, 
-                BlockchainClient.CONTENT: on_chain_value}
+        txs = [{BlockchainClient.KEY: key_val, 
+                BlockchainClient.CONTENT: on_chain_value} for key_val in key_vals]
         timeout = time.time() + self.timeout
-        tx_receipt = None
+        tx_receipts = []
         # Post to blockchain
-        while time.time() < timeout:
-            try:
-                tx_receipt = self._make_setter_call(tx)
-                break
-            except (UnboundLocalError, requests.exceptions.ConnectionError) as e:
-                logging.info("HTTP SET error, got: {0}".format(e))
-                continue
-        return on_chain_value, tx_receipt
+        for tx in txs:
+            while time.time() < timeout:
+                try:
+                    tx_receipts.append(self._make_setter_call(tx))
+                    break
+                except (UnboundLocalError, requests.exceptions.ConnectionError) as e:
+                    logging.info("HTTP SET error, got: {0}".format(e))
+                    continue
+        return on_chain_value, tx_receipts
 
     def _make_model(self, model: object, batch_size: int=32, 
                     epochs: int=10, split: float=1, avg_type: str="data_size"):
@@ -111,14 +112,9 @@ class DMLClient(BlockchainClient):
         """
         # TODO: This should be updated once we have a better schema for
         # what the participants dict will look like.
-        returndict = {}
-        for dataprovider_name, nested_dict in participants.items():
-            try:
-                label = nested_dict["label_column_name"]
-            except Exception as e:
-                raise Exception("Supervised learning needs a column to be specified as the label column")
-            returndict[dataprovider_name] = nested_dict
-        return returndict
+        assert all(["label_column_name" in dct for dct in participants]), \
+            "Supervised learning needs a column to be specified as the label column"
+        return participants
     
     def _make_optimizer(self, opt_type="fed_avg", 
                         num_rounds=1, num_averages_per_round=1):
@@ -163,9 +159,9 @@ class DMLClient(BlockchainClient):
         participants=self._make_participants(
             participants=participants
         )
-        key, receipt = self._learn(
+        keys, receipt = self._learn(
             model=model_dict,
             optimizer=optimizer_params,
             participants=participants
         )
-        return key
+        return keys
