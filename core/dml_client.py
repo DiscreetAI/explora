@@ -43,6 +43,8 @@ class DMLClient(BlockchainClient):
         job_to_post["framework_type"] = model.get("framework_type", "keras")
         job_to_post["hyperparams"] = model["hyperparams"]
         serialized_job = {"job_data": job_to_post}
+        # We post the participants as well so that each participant will know 
+        # which keys to accept messages from in the future
         new_session_event = {
             BlockchainClient.KEY: None,
             BlockchainClient.CONTENT: {
