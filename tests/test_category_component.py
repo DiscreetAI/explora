@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np 
 from core.category_component import CategoryComponent
 
+@pytest.fixture
 def blockchain_client():
 	class BlockchainClient:
 		def getter(self, provider):
@@ -24,6 +25,7 @@ def blockchain_client():
 						'dataset6': {'real': 1, 'barca': 6}}
 	return BlockchainClient()
 
+@pytest.fixture
 def db_client():
 	class DBClient:
 		def _get_data_providers_with_category(self, category):
@@ -37,6 +39,7 @@ def db_client():
 				raise Exception('error')
 	return DBClient()
 
+@pytest.fixture
 def category_component(blockchain_client, db_client):
 	return CategoryComponent(db_client, blockchain_client)
 

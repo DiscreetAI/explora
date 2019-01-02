@@ -4,6 +4,7 @@ import pytest
 from core.blockchain_client import BlockchainClient
 
 
+@pytest.fixture
 def blockchain_client():
     """
     Maintain instance of Blockchain Client

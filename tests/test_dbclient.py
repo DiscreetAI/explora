@@ -5,6 +5,7 @@ import pytest
 import pandas as pd
 from core.db_client import DBClient
 
+@pytest.fixture
 def db_client():
     """
     Maintain instance of DB Client
