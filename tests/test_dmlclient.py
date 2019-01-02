@@ -55,7 +55,7 @@ def test_dml_client_serializes_job_correctly(dml_client, ipfs_client, model, par
     assert participants == content["participants"]
     assert content["optimizer_params"]["optimizer_type"] == "fed_avg"
 
-def test_dml_client_validates_label_column_name(dml_client, ipfs_client, model, participants):
+def test_dml_client_validates_label_column_name(dml_client, model, participants):
     participants.append({"dataset_uuid": 666})
     with pytest.raises(Exception):
         key = dml_client.decentralized_learn(

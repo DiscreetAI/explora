@@ -100,13 +100,13 @@ class DMLClient(BlockchainClient):
         model_dict["hyperparams"] = hyperparams
         return model_dict
     
-    def _make_participants(self, participants: dict):
+    def _validate_participants(self, participants: dict):
         """
         Helper function for decentralized_learn.
-        Returns a dict of participants = {
-            dataprovider_name: {'dataset_uuid': uuid,
-            'label_column_name': label})
-        }
+        Returns a list of participants = [
+            {'dataset_uuid': uuid,
+            'label_column_name': label}
+        ]
         For the MVP, all participants will see this long dict. They will lookup their own
         name, to get the uuid of their dataset and the label_column_name for their dataset.
         NOTE: Currently this function only tests the label_column_name
@@ -116,7 +116,6 @@ class DMLClient(BlockchainClient):
         # what the participants dict will look like.
         assert all(["label_column_name" in dct for dct in participants]), \
             "Supervised learning needs a column to be specified as the label column"
-        return participants
     
     def _make_optimizer(self, opt_type="fed_avg", 
                         num_rounds=1, num_averages_per_round=1):
@@ -158,9 +157,7 @@ class DMLClient(BlockchainClient):
             # before moving on. (well, technically RN n-1 since key management but)
             num_averages_per_round=len(participants)
         )
-        participants=self._make_participants(
-            participants=participants
-        )
+        self._validate_participants(participants)
         keys, receipt = self._learn(
             model=model_dict,
             optimizer=optimizer_params,
