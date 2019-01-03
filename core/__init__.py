@@ -25,5 +25,5 @@ class Explora(Orchestrator):
         blockchain_client = BlockchainClient()
         category_component = CategoryComponent(db_client, blockchain_client)
         ed_component = EDComponent()
-        Orchestrator.__init__(category_component, ed_component)
+        Orchestrator.__init__(self, category_component, ed_component)
 
