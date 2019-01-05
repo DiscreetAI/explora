@@ -39,6 +39,7 @@ class CategoryComponent(object):
 			error_message = 'Category: {} has no data providers.'
 			return {'Success': False, 'Error': error_message.format(category)}
 		providers_list = data_providers_df['data_provider']
+		print(providers_list)
 		result = list()
 		for provider in providers_list:
 			ed_directory = self.blockchain_client.get_dataset(provider)

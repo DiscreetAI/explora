@@ -52,6 +52,8 @@ class Orchestrator(object):
             result = self.category_component.get_datasets_with_category(category_text)
             if result['Success']:
                 self.datasets = result['Result']
+            else:
+                print(result['Error'])
             sender.disabled = False
 
 
