@@ -21,23 +21,11 @@ class BlockchainClient(object):
         """
         Connect with running IPFS node.
         """
-        config = {
-                    "ipfs_port": 5001,
-                    "http_port": 3000,
-                    "host": "127.0.0.1",
-                    "timeout": 5
-                }
-        # self.host = config.get("BLOCKCHAIN_CLIENT", "host")
-        # self.ipfs_port = config.getint("BLOCKCHAIN_CLIENT", "ipfs_port")
-        # self.port = config.getint("BLOCKCHAIN_CLIENT", "http_port")
-        # self.timeout = config.getint("BLOCKCHAIN_CLIENT", "timeout")
+        self.host = config.get("BLOCKCHAIN_CLIENT", "host")
+        self.ipfs_port = config.getint("BLOCKCHAIN_CLIENT", "ipfs_port")
+        self.port = config.getint("BLOCKCHAIN_CLIENT", "http_port")
+        self.timeout = config.getint("BLOCKCHAIN_CLIENT", "timeout")
 
-        self.host = config.get("host")
-        self.ipfs_port = config.get("ipfs_port")
-        self.port = config.get("http_port")
-        self.timeout = config.get("timeout")
-        print("VARS")
-        print(self.host, self.ipfs_port, self.port, self.timeout)
         self.client = None
         try:
             self.client = ipfsapi.connect(self.host, self.ipfs_port)
