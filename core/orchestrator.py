@@ -315,7 +315,7 @@ class Orchestrator(object):
         )
         self._training_statistics()
 
-    def _training_statistics(self):
+    def _training_statistics(self, max_time_length = None):
         training_finished = False
 
         while(not training_finished):
@@ -334,11 +334,17 @@ class Orchestrator(object):
                 stats = dataset_dictionary['dataset_stats']['training_history']
                 for stat_name, stat_arr in stats.items():
                     title = "Plotting {} for each round".format(stat_name)
-                    pd.Series(stat_arr).plot(kind='line', title=title)
+                    pd.Series(stat_arr).plot(
+                        kind='line', 
+                        title=title, 
+                        xticks=range(len(stat_arr)))
                     plt.show()
                 print()
             #User should have enough time to look at stats before output reloads.
             time.sleep(10)
+
+            if max_time_length and time.time() > max_time_length:
+                raise Exception('Training took too long!')
 
 
 
