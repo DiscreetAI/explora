@@ -23,7 +23,7 @@ class BlockchainClient(object):
         """
         config = {
                     "ipfs_port": 5001,
-                    "http_port": 3001,
+                    "http_port": 3000,
                     "host": "127.0.0.1",
                     "timeout": 5
                 }
