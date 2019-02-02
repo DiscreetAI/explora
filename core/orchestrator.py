@@ -315,23 +315,32 @@ class Orchestrator(object):
         )
         self._training_statistics()
 
-    def _training_statistics(self, max_time_length = None):
+
+
+    def _training_statistics(self):
         training_finished = False
+        job_dict = self.status_server_client.get_latest_stats(self.job_uuid)
+        cached_round_nums = None
 
         while(not training_finished):
-            clear_output()
             job_dict = self.status_server_client.get_latest_stats(self.job_uuid)
-            training_finished = True
+            new_round_nums = {
+                                dataset_uuid: dataset_dictionary['round_num'] \
+                                for dataset_uuid, dataset_dictionary in job_dict.items()
+                            }
+            if cached_round_nums and cached_round_nums == new_round_nums:
+                continue
+            clear_output()
+            if all(round_num == self.num_rounds for round_num in new_round_nums.values()):
+                training_finished = True
 
             for dataset_uuid, dataset_dictionary in job_dict.items():
                 round_num = dataset_dictionary['round_num']
-                if round_num < self.num_rounds:
-                    training_finished = False
+                stats = dataset_dictionary['dataset_stats']['training_history']
 
                 print('Statistics for Dataset with UUID {}'.format(dataset_uuid))
                 print('\tRound Number: {}'.format(round_num))
                 
-                stats = dataset_dictionary['dataset_stats']['training_history']
                 for stat_name, stat_arr in stats.items():
                     title = "Plotting {} for each round".format(stat_name)
                     pd.Series(stat_arr).plot(
@@ -340,15 +349,7 @@ class Orchestrator(object):
                         xticks=range(len(stat_arr)))
                     plt.show()
                 print()
-            #User should have enough time to look at stats before output reloads.
-            time.sleep(10)
-
-            if max_time_length and time.time() > max_time_length:
-                raise Exception('Training took too long!')
-
-
-
-                   
+            cached_round_nums = new_round_nums
 
 
     def visualize(self): 
