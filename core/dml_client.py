@@ -24,7 +24,7 @@ class DMLClient(BlockchainClient):
 
     # helper function implementation
 
-    def _learn(self, model=dict, participants=dict, optimizer=dict):
+    def _learn(self, model=dict, participants=dict, optimizer=dict, job_uuid=str):
         """
         Helper function for decentralized_learn.
         Provided a model and a list of participants who are expected to

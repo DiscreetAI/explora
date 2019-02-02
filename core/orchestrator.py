@@ -300,7 +300,7 @@ class Orchestrator(object):
         Send DML Client the necessary parameters for training of the model.
         """
         self.model = model
-        self.job_uuid = uuid.uuid4()
+        self.job_uuid = str(uuid.uuid4())
         self._sanity_check_dml_request()
         self.dml_client.decentralized_learn(
             job_uuid=self.job_uuid,
