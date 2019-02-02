@@ -9,7 +9,6 @@ from core.blockchain_client import BlockchainClient
 def config():
     config = configparser.ConfigParser()
     config.read('tests/artifacts/blockchain_client/configuration.ini')
-    print(type(config))
     return config
 
 @pytest.fixture(scope='session')

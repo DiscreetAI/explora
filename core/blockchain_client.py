@@ -36,6 +36,8 @@ class BlockchainClient(object):
         self.ipfs_port = config.get("ipfs_port")
         self.port = config.get("http_port")
         self.timeout = config.get("timeout")
+        print("VARS")
+        print(self.host, self.ipfs_port, self.port, self.timeout)
         self.client = None
         try:
             self.client = ipfsapi.connect(self.host, self.ipfs_port)
