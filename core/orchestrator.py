@@ -318,6 +318,15 @@ class Orchestrator(object):
 
 
     def _training_statistics(self):
+        """
+        Frontend for displaying training statistics while training is active.
+
+        Constantly poll the Status Server for the latest statistics for each 
+        datasetIf any new dataset has updated statistics (i.e. new round), the 
+        output will be cleared and replaced with the latest statistics. Loop
+        terminates when training is done (i.e. all datasets have reached 
+        self.num_rounds)
+        """
         training_finished = False
         job_dict = self.status_server_client.get_latest_stats(self.job_uuid)
         cached_round_nums = None
