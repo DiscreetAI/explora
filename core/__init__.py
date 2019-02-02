@@ -27,7 +27,7 @@ class Explora(Orchestrator):
         config.read(config_filepath)
         db_client = DBClient(config)
         blockchain_client = BlockchainClient(config)
-        dml_client = DMLClient()
+        dml_client = DMLClient(config)
         category_component = CategoryComponent(db_client, blockchain_client)
         ed_component = EDComponent()
         Orchestrator.__init__(self, category_component, ed_component, dml_client)
