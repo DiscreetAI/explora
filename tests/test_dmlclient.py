@@ -14,7 +14,7 @@ def config():
     return config
 
 @pytest.fixture(scope='session')
-def dml_client():
+def dml_client(config):
     """
     DMLClient instance
     """

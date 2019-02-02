@@ -22,8 +22,8 @@ class BlockchainClient(object):
         Connect with running IPFS node.
         """
         self.host = config.get("BLOCKCHAIN_CLIENT", "host")
-        self.ipfs_port = config.get("BLOCKCHAIN_CLIENT", "ipfs_port")
-        self.port = config.get("BLOCKCHAIN_CLIENT", "http_port")
+        self.ipfs_port = config.getint("BLOCKCHAIN_CLIENT", "ipfs_port")
+        self.port = config.getint("BLOCKCHAIN_CLIENT", "http_port")
         self.timeout = config.getint("BLOCKCHAIN_CLIENT", "timeout")
         self.client = None
         try:
