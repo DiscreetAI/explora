@@ -331,9 +331,17 @@ class Orchestrator(object):
         training_finished = False
         job_dict = self.status_server_client.get_latest_stats(self.job_uuid)
         cached_round_nums = None
+        stats_available = False
+        print('No statistics available yet.')
 
         while(not training_finished):
-            job_dict = self.status_server_client.get_latest_stats(self.job_uuid)
+            try:
+                job_dict = self.status_server_client.get_latest_stats(self.job_uuid)
+            except AssertionError as e:
+                continue
+            if not stats_available:
+                clear_output()
+                stats_available = True
             new_round_nums = {
                                 dataset_uuid: dataset_dictionary['round_num'] \
                                 for dataset_uuid, dataset_dictionary in job_dict.items()
