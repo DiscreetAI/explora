@@ -329,7 +329,6 @@ class Orchestrator(object):
         self.num_rounds)
         """
         training_finished = False
-        job_dict = self.status_server_client.get_latest_stats(self.job_uuid)
         cached_round_nums = None
         stats_available = False
         print('No statistics available yet.')
