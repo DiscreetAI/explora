@@ -77,7 +77,7 @@ class Orchestrator(object):
                 self.datasets = result['datasets']
                 self.uuid_to_dataset = result['uuid_to_dataset']
             else:
-                print(result['Error'])
+                print(result['error'])
             sender.disabled = False
 
 
