@@ -1,0 +1,9 @@
+#!/bin/bash
+scp -i "neel-ec2.pem" core/* ec2-user@ec2-54-215-251-145.us-west-1.compute.amazonaws.com:code/core
+scp -i "neel-ec2.pem" Explora.ipynb ec2-user@ec2-54-215-251-145.us-west-1.compute.amazonaws.com:code
+ssh -i "neel-ec2.pem" ec2-user@ec2-54-215-251-145.us-west-1.compute.amazonaws.com '
+cd code
+tmux kill-session
+tmux new-session -d -s my_session "jupyter notebook"
+'
+
