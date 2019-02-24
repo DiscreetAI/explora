@@ -6,4 +6,3 @@ cd code
 tmux kill-session
 tmux new-session -d -s my_session "jupyter notebook"
 '
-
